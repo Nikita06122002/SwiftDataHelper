@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "SwiftDataHelper",
             dependencies: [
-                .product(name: "Dependencies", package: "swift-dependencies") // Добавляем зависимость
+                .product(name: "Dependencies", package: "swift-dependencies")
             ]
         ),
         .testTarget(
