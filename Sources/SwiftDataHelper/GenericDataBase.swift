@@ -12,31 +12,31 @@ import SwiftData
 /// A generic database service for managing models that conform to `IdentifiableModel`.
 /// This struct provides various asynchronous operations for fetching, adding, deleting,
 /// and saving models within a SwiftData context.
-public struct GenericDatabase<Model: IdentifiableModel> {
+public struct GenericDatabase<Model: IdentifiableModel>: Sendable{
     
     /// Fetches all instances of `Model` from the database.
-    var fetchAll: @MainActor () async throws -> [Model]
+    public var fetchAll: @MainActor () async throws -> [Model]
     
     /// Fetches models that match the specified fetch descriptor.
-    var fetch: @MainActor (FetchDescriptor<Model>) async throws -> [Model]
+    public var fetch: @MainActor (FetchDescriptor<Model>) async throws -> [Model]
     
     /// Fetches the count of models that match the specified fetch descriptor.
-    var fetchCount: @MainActor (FetchDescriptor<Model>) async throws -> Int
+    public var fetchCount: @MainActor (FetchDescriptor<Model>) async throws -> Int
     
     /// Adds a new `Model` instance to the database.
-    var add: @MainActor (Model) async throws -> Void
+    public var add: @MainActor (Model) async throws -> Void
     
     /// Deletes the specified `Model` instance from the database.
-    var delete: @MainActor (Model) async throws -> Void
+    public var delete: @MainActor (Model) async throws -> Void
     
     /// Deletes a `Model` instance from the database by its identifier.
-    var deleteById: @MainActor (String) async throws -> Void
+    public var deleteById: @MainActor (String) async throws -> Void
     
     /// Saves any pending changes in the database.
-    var save: @MainActor () async throws -> Void
+    public var save: @MainActor () async throws -> Void
     
     /// Enum representing possible database-related errors.
-    enum DatabaseError: Error {
+    public enum DatabaseError: Error {
         case add
         case delete
         case save
