@@ -13,7 +13,7 @@ import Foundation
 /// passed across concurrency contexts and have a unique identifier.
 ///
 /// Any model conforming to this protocol must define a unique `id` property.
-protocol IdentifiableModel: PersistentModel {
+public protocol IdentifiableModel: PersistentModel {
     
     /// A unique identifier for the model.
     /// This identifier is a `String` and must be implemented by any conforming model.

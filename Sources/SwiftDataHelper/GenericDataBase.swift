@@ -9,36 +9,32 @@ import Foundation
 import Dependencies
 import SwiftData
 
-import Foundation
-import Dependencies
-import SwiftData
-
 /// A generic database service for managing models that conform to `IdentifiableModel`.
 /// This struct provides various asynchronous operations for fetching, adding, deleting,
 /// and saving models within a SwiftData context.
-struct GenericDatabase<Model: IdentifiableModel> {
-
+public struct GenericDatabase<Model: IdentifiableModel> {
+    
     /// Fetches all instances of `Model` from the database.
     var fetchAll: @MainActor () async throws -> [Model]
-
+    
     /// Fetches models that match the specified fetch descriptor.
     var fetch: @MainActor (FetchDescriptor<Model>) async throws -> [Model]
-
+    
     /// Fetches the count of models that match the specified fetch descriptor.
     var fetchCount: @MainActor (FetchDescriptor<Model>) async throws -> Int
-
+    
     /// Adds a new `Model` instance to the database.
     var add: @MainActor (Model) async throws -> Void
-
+    
     /// Deletes the specified `Model` instance from the database.
     var delete: @MainActor (Model) async throws -> Void
-
+    
     /// Deletes a `Model` instance from the database by its identifier.
     var deleteById: @MainActor (String) async throws -> Void
-
+    
     /// Saves any pending changes in the database.
     var save: @MainActor () async throws -> Void
-
+    
     /// Enum representing possible database-related errors.
     enum DatabaseError: Error {
         case add
@@ -49,7 +45,7 @@ struct GenericDatabase<Model: IdentifiableModel> {
 }
 
 extension GenericDatabase: DependencyKey {
-
+    
     /// The live implementation of the `GenericDatabase` for dependency injection.
     public static var liveValue: Self {
         Self(
