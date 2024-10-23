@@ -32,8 +32,8 @@ struct YourApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(SwiftDataModelConfigurationProvider.shared.container)
         }
+           .modelContainer(SwiftDataModelConfigurationProvider.shared.container)
     }
 }
 ```
