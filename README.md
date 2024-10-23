@@ -49,9 +49,9 @@ import SwiftDataHelper
 import Dependencies
 extension DependencyValues {
 
-    var database: GenericDatabase<OTPModel> {
-        get { self[GenericDatabase<OTPModel>.self] }
-        set { self[GenericDatabase<OTPModel>.self] = newValue }
+    var database: GenericDatabase<YourModel> {
+        get { self[GenericDatabase<YourModel>.self] }
+        set { self[GenericDatabase<YourModel>.self] = newValue }
     }
 }
 ```
