@@ -21,7 +21,7 @@ public class SwiftDataModelConfigurationProvider {
     ///
     /// - Note: The singleton is isolated on the `MainActor` to ensure thread safety when managing
     ///         SwiftData operations.
-    @MainActor public static var shared = SwiftDataModelConfigurationProvider(isStoredInMemoryOnly: false, autosaveEnabled: true)
+    @MainActor public static var shared: SwiftDataModelConfigurationProvider!
 
     // MARK: - Configuration Properties
     
@@ -34,8 +34,14 @@ public class SwiftDataModelConfigurationProvider {
     /// An array of model types conforming to `PersistentModel.Type`. This schema defines the models
     /// that will be used in the `ModelContainer`.
     private var schema: [any PersistentModel.Type]
-    
+
     // MARK: - ModelContainer
+    
+    @MainActor
+       public static func initializeSchema(_ schema: [any PersistentModel.Type], isStoredInMemoryOnly: Bool = false, autosaveEnabled: Bool = true) {
+           shared = SwiftDataModelConfigurationProvider(isStoredInMemoryOnly: isStoredInMemoryOnly, autosaveEnabled: autosaveEnabled, schema: schema)
+       }
+       
     
     /// The `ModelContainer` used to interact with the persistent store.
     /// This property is isolated on the `MainActor` to ensure that all SwiftData operations
@@ -53,31 +59,13 @@ public class SwiftDataModelConfigurationProvider {
     ///   - autosaveEnabled: A boolean that enables automatic saving of changes in the `ModelContext`.
     ///   - schema: An array of model types that conform to `PersistentModel.Type` to define the schema.
     @MainActor
-    private init(isStoredInMemoryOnly: Bool, autosaveEnabled: Bool, schema: [any PersistentModel.Type] = []) {
-        self.isStoredInMemoryOnly = isStoredInMemoryOnly
-        self.autosaveEnabled = autosaveEnabled
-        self.schema = schema
+      private init(isStoredInMemoryOnly: Bool, autosaveEnabled: Bool, schema: [any PersistentModel.Type]) {
+          self.isStoredInMemoryOnly = isStoredInMemoryOnly
+          self.autosaveEnabled = autosaveEnabled
+          self.schema = schema
 
-        // Initialize the container using the provided schema and configuration options
-        self.container = try! SwiftDataModelConfigurationProvider.createContainer(schema: schema, isStoredInMemoryOnly: isStoredInMemoryOnly, autosaveEnabled: autosaveEnabled)
-    }
-
-    // MARK: - Schema Management
-    
-    /// Updates the schema of the `ModelContainer` after the provider has been initialized.
-    /// This allows the `ModelContainer` to be recreated with a new schema while preserving
-    /// other configuration settings such as memory storage and autosave.
-    ///
-    /// - Parameter newSchema: The new schema consisting of model types conforming to `PersistentModel.Type`.
-    @MainActor
-    public func setSchema(_ newSchema: [any PersistentModel.Type]) {
-        self.schema = newSchema
-        
-        // Recreate the container on the main actor with the updated schema
-        Task { @MainActor in
-            self.container = try! SwiftDataModelConfigurationProvider.createContainer(schema: newSchema, isStoredInMemoryOnly: isStoredInMemoryOnly, autosaveEnabled: autosaveEnabled)
-        }
-    }
+          self.container = try! SwiftDataModelConfigurationProvider.createContainer(schema: schema, isStoredInMemoryOnly: isStoredInMemoryOnly, autosaveEnabled: autosaveEnabled)
+      }
 
     // MARK: - Private Helper Methods
     
@@ -90,15 +78,11 @@ public class SwiftDataModelConfigurationProvider {
     /// - Returns: A new `ModelContainer` configured with the given schema and options.
     /// - Throws: An error if the container cannot be created with the provided schema.
     @MainActor
-    private static func createContainer(schema: [any PersistentModel.Type], isStoredInMemoryOnly: Bool, autosaveEnabled: Bool) throws -> ModelContainer {
-        let schema = Schema(schema)
-        let configuration = ModelConfiguration(isStoredInMemoryOnly: isStoredInMemoryOnly)
-
-        // Create the `ModelContainer` with the given schema and configuration
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-
-        // Set the autosave option for the main context within the container
-        container.mainContext.autosaveEnabled = autosaveEnabled
-        return container
-    }
+       private static func createContainer(schema: [any PersistentModel.Type], isStoredInMemoryOnly: Bool, autosaveEnabled: Bool) throws -> ModelContainer {
+           let schema = Schema(schema)
+           let configuration = ModelConfiguration(isStoredInMemoryOnly: isStoredInMemoryOnly)
+           let container = try ModelContainer(for: schema, configurations: [configuration])
+           container.mainContext.autosaveEnabled = autosaveEnabled
+           return container
+       }
 }
