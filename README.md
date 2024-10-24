@@ -22,11 +22,7 @@ In your `App` file (or wherever your SwiftUI entry point is), configure the Swif
 @main
 struct YourApp: App {
     init() {
-        Task {
-            await MainActor.run {
-                SwiftDataModelConfigurationProvider.shared.setSchema([OTPModel.self])
-            }
-        }
+        SwiftDataModelConfigurationProvider.initializeSchema([ YourModel.self ])
     }
 
     var body: some Scene {
